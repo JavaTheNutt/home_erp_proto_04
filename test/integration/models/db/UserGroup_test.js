@@ -33,18 +33,65 @@ describe('user group', function () {
 			});
 			const res       = await userGroup.save();
 			expect(res._id).to.exist;
+			expect(res.users.length).to.equal(1);
+			expect(res.name).to.equal('wemyss');
 		});
 		it('should fail when no email is provided', async function () {
-			expect(true).to.be.false;
+			const user  = new User({
+				firstName: 'joewemyss',
+				surname: 'wemyss'
+			});
+			const group = new UserGroup({
+				name: 'wemyss',
+				users: [user]
+			});
+			try {
+				const res = await group.save();
+			} catch (err) {
+				expect(err).to.exist;
+			}
 		});
 		it('should fail when email is badly formatted', async function () {
-			expect(true).to.be.false;
+			const user  = new User({
+				email: 'joewemyss',
+				firstName: 'joewemyss',
+				surname: 'wemyss'
+			});
+			const group = new UserGroup({
+				name: 'wemyss',
+				users: [user]
+			});
+			try {
+				const res = await group.save();
+			} catch (err) {
+				expect(err).to.exist;
+			}
 		});
 		it('should fail when no users are provided', async function () {
-			expect(true).to.be.false;
+			const group = new UserGroup({
+				name: 'wemyss',
+				users: []
+			});
+			try {
+				const res = await group.save();
+			} catch (err) {
+				expect(err).to.exist;
+			}
 		});
 		it('should fail when no group name is provided', async function () {
-			expect(true).to.be.false;
+			const user      = new User({
+				email: 'joewemyss3@gmail.com',
+				firstName: 'joe',
+				surname: 'wemyss'
+			});
+			const group = new UserGroup({
+				users: [user]
+			});
+			try {
+				const res = await group.save();
+			} catch (err) {
+				expect(err).to.exist;
+			}
 		});
 	})
 });
