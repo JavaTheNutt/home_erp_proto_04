@@ -4,7 +4,8 @@
   "description": "prototype 4 for home erp system",
   "main": "api/index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test find ./test -name '*_test.js' | xargs nyc mocha -R spec"
+    "test": "cross-env NODE_ENV=test find ./test -name '*_test.js' | xargs nyc mocha -R spec",
+    "dev": "cross-env NODE_ENV=development nodemon api/index.js"
   },
   "repository": {
     "type": "git",
