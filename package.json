@@ -1,0 +1,40 @@
+{
+  "name": "home_erp_v_04",
+  "version": "0.0.1",
+  "description": "prototype 4 for home erp system",
+  "main": "api/index.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test find ./test -name '*_test.js' | xargs nyc mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JavaTheNutt/home_erp_proto_04.git"
+  },
+  "author": "Joe Wemyss <joe.wemyss@javathenutt.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JavaTheNutt/home_erp_proto_04/issues"
+  },
+  "homepage": "https://github.com/JavaTheNutt/home_erp_proto_04#readme",
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "cross-env": "^5.0.5",
+    "mocha": "^3.5.0",
+    "nodemon": "^1.11.0",
+    "nyc": "^11.1.0",
+    "sinon": "^3.2.1",
+    "sinon-chai": "^2.13.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "firebase-admin": "^5.2.1",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.11.9",
+    "njwt": "^0.4.0",
+    "restify": "^5.2.0",
+    "restify-cors-middleware": "^1.0.1",
+    "restify-errors": "^5.0.0",
+    "restify-plugins": "^1.6.0",
+    "winston": "^2.3.1"
+  }
+}
