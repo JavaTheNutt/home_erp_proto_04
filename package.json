@@ -5,7 +5,8 @@
   "main": "api/index.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test find ./test -name '*_test.js' | xargs nyc mocha -R spec",
-    "dev": "cross-env NODE_ENV=development nodemon api/index.js"
+    "dev": "cross-env NODE_ENV=development nodemon api/index.js",
+    "prod": "cross-env NODE_ENV=production node api/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "email-validator": "^1.1.1",
     "firebase-admin": "^5.2.1",
     "lodash": "^4.17.4",
     "mongoose": "^4.11.9",

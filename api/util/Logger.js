@@ -8,7 +8,6 @@ const Logger  = new (winston.Logger)({
 });
 
 if (config.env !== 'production') {
-	console.log('configuring non productive logger')
 	Logger.level = 'verbose';
 	Logger.add(winston.transports.File, {
 		name: 'debug-log',
