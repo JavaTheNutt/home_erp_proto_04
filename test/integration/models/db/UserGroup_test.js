@@ -6,7 +6,7 @@ const User      = require('../../../../api/models/db/User').model;
 const config    = require('../../../../config');
 const testUtils = require('../../test_util');
 
-const COLLECTION_NAME = 'user_group'
+const COLLECTION_NAME = 'user_group';
 
 describe('user group', function () {
 	before(function (done) {
