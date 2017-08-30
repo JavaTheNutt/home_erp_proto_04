@@ -158,3 +158,4 @@ $RECYCLE.BIN/
 *.lnk
 /config.js
 /log/
+/.nyc_output/
