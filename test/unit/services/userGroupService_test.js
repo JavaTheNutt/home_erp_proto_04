@@ -119,13 +119,16 @@ describe('user group service', function () {
 	describe('object creation', function () {
 		'use strict';
 		const saveStub   = sinon.stub(UserGroup.prototype, 'save');
+		const constructorStub = sinon.stub(UserGroup.prototype, 'constructor');
 		mongoose.Promise = Promise;
 		beforeEach(function (done) {
 			saveStub.reset();
+			constructorStub.reset();
 			return done();
 		});
 		after(function (done) {
 			saveStub.restore();
+			constructorStub.restore();
 			return done();
 		});
 		it('creates an object without error', async function () {
@@ -162,6 +165,9 @@ describe('user group service', function () {
 			//I tried the four variations below.
 			//expect(saveStub).to.be.calledWithMatch(persistableDetails);
 			expect(saveStub).to.be.calledOnce;
+			//fixme: unble to spy on mongoose constructor
+			//expect(constructorStub).to.be.calledOnce;
+
 			//sinon.assert.calledWithMatch(saveStub, persistableDetails)
 			//sinon.assert.calledWith(saveStub, persistableDetails)
 		})
