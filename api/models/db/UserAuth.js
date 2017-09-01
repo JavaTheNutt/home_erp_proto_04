@@ -4,7 +4,7 @@ const AuthProvider    = require('./AuthProvider').schema;
 const UserGroup       = require('./UserGroup').model;
 
 const Logger         = require('../../util/Logger')('USER_AUTH_MODEL');
-//fixme tests fail when importing this module
+
 const UserAuthSchema = mongoose.Schema({
 	email: {
 		type: String,
