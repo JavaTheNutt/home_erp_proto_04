@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserSchema = require('./User').schema;
+const UserSchema      = require('./User').schema;
 const UserGroupSchema = mongoose.Schema({
 	name: {
 		type: String,

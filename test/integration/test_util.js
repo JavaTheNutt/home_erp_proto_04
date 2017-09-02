@@ -10,24 +10,52 @@ module.exports = {
 			if (err) {
 				return done(err);
 			}
-			if (mongoose.connection.collections[collectionName]) {
-				mongoose.connection.collections[collectionName].drop((err) => {
-					if (err && err.message !== 'ns not found') {
-						return done(err);
+			if (Array.isArray(collectionName)) {
+				collectionName.forEach((name, i) => {
+					if (mongoose.connection.collections[name]) {
+						mongoose.connection.collections[name].drop((err) => {
+							if (err && err.message !== 'ns not found') {
+								return done(err);
+							}
+							if (i === collectionName.length - 1) {
+								return done(null);
+							}
+						})
 					}
-					return done(null);
 				})
+			} else {
+				if (mongoose.connection.collections[collectionName]) {
+					mongoose.connection.collections[collectionName].drop((err) => {
+						if (err && err.message !== 'ns not found') {
+							return done(err);
+						}
+						return done(null);
+					})
+				}
 			}
 		})
 	},
 	clearCollection(collectionName, done) {
 		'use strict';
-		mongoose.connection.collections[collectionName].remove((err) => {
-			if (err) {
-				return done(err);
-			}
-			return done();
-		});
+		if (Array.isArray(collectionName)) {
+			collectionName.forEach((name, i) => {
+				mongoose.connection.collections[name].remove((err) => {
+					if (err) {
+						return done(err);
+					}
+					if (i === collectionName.length - 1) {
+						return done();
+					}
+				});
+			})
+		} else {
+			mongoose.connection.collections[collectionName].remove((err) => {
+				if (err) {
+					return done(err);
+				}
+				return done();
+			});
+		}
 	},
 	closeConnection(done) {
 		'use strict';
