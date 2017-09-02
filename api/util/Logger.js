@@ -30,19 +30,19 @@ if (config.env !== 'production') {
 } else {
 	Logger.level = 'error';
 }
-module.exports = function (moduleName){
+module.exports = function (moduleName) {
 	'use strict';
 	return {
-		error(text){
+		error(text) {
 			Logger.error(`${moduleName}: ${text}`)
 		},
-		info(text){
+		info(text) {
 			Logger.info(`${moduleName}: ${text}`)
 		},
-		warn(text){
+		warn(text) {
 			Logger.warn(`${moduleName}: ${text}`)
 		},
-		verbose(text){
+		verbose(text) {
 			Logger.verbose(`${moduleName}: ${text}`)
 		}
 	}

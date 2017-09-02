@@ -3,7 +3,7 @@ const emailValidation = require('../../services/validation').validateEmail;
 const AuthProvider    = require('./AuthProvider').schema;
 const UserGroup       = require('./UserGroup').model;
 
-const Logger         = require('../../util/Logger')('USER_AUTH_MODEL');
+const Logger = require('../../util/Logger')('USER_AUTH_MODEL');
 
 const UserAuthSchema = mongoose.Schema({
 	email: {
@@ -54,10 +54,11 @@ async function checkGroupIdExists(id, done) {
 	Logger.verbose(`user group exists`);
 	return done(true)
 }
-async function checkUserIdExists(id, done){
+
+async function checkUserIdExists(id, done) {
 	'use strict';
 	Logger.verbose(`attempting to verify if user exists`);
-	const result = await UserGroup.findOne({"users._id": id})
+	const result = await UserGroup.findOne({"users._id": id});
 	if (!result || !result._id) {
 		Logger.error(`user does not exist, aborting`);
 		return done(false);

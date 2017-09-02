@@ -1,11 +1,12 @@
-const UserGroup      = require('../models/db/UserGroup');
+const UserGroup      = require('../models/db/UserGroup').model;
 const Logger         = require('../util/Logger')('USER_GROUP_SERVICE');
 const emailValidator = require('../services/validation').validateEmail;
 module.exports       = {
 	async createGroup(details) {
 		'use strict';
 		Logger.info(`create group called`);
-		const group   = new UserGroup(this.formatGroup(details));
+		const group  = new UserGroup(this.formatGroup(details));
+		// noinspection Annotator
 		const result = await group.save();
 		Logger.verbose(`results of save: ${JSON.stringify(result)}`);
 		return result;

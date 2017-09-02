@@ -8,7 +8,7 @@ chai.use(require('sinon-chai'));
 const mongoose         = require('mongoose');
 mongoose.Promise       = Promise;
 const userGroupService = require('../../../api/services/userGroupService');
-const UserGroup        = require('../../../api/models/db/UserGroup');
+const UserGroup        = require('../../../api/models/db/UserGroup').model;
 
 const mockeryOptions = {
 	useCleanCache: true,
@@ -118,9 +118,9 @@ describe('user group service', function () {
 	});
 	describe('object creation', function () {
 		'use strict';
-		const saveStub   = sinon.stub(UserGroup.prototype, 'save');
+		const saveStub        = sinon.stub(UserGroup.prototype, 'save');
 		const constructorStub = sinon.stub(UserGroup.prototype, 'constructor');
-		mongoose.Promise = Promise;
+		mongoose.Promise      = Promise;
 		beforeEach(function (done) {
 			saveStub.reset();
 			constructorStub.reset();

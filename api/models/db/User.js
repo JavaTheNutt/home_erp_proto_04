@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const Logger = require('../../util/Logger')('USER_MODEL');
+const Logger          = require('../../util/Logger')('USER_MODEL');
 const emailValidation = require('../../services/validation').validateEmail;
-const UserSchema = mongoose.Schema({
+const UserSchema      = mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
 		unique: true,
-		validate:{
+		validate: {
 			validator: emailValidation,
 			message: 'email is improperly formatted'
 		}
@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema({
 	surname: String
 
 });
- const UserModel = mongoose.model('User', UserSchema);
+const UserModel       = mongoose.model('User', UserSchema);
 
 module.exports = {
 	schema: UserSchema,

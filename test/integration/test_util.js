@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const config = require('../../config');
+const config   = require('../../config');
 
 mongoose.Promise = Promise;
 
 module.exports = {
-	initialSetup (collectionName, done) {
+	initialSetup(collectionName, done) {
 		'use strict';
 		mongoose.connect(config.db.test.uri, {useMongoClient: true}, (err) => {
 			if (err) {
@@ -20,7 +20,7 @@ module.exports = {
 			}
 		})
 	},
-	clearCollection (collectionName, done) {
+	clearCollection(collectionName, done) {
 		'use strict';
 		mongoose.connection.collections[collectionName].remove((err) => {
 			if (err) {
@@ -29,7 +29,7 @@ module.exports = {
 			return done();
 		});
 	},
-	closeConnection (done) {
+	closeConnection(done) {
 		'use strict';
 		mongoose.connection.close();
 		return done();

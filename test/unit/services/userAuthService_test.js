@@ -91,7 +91,7 @@ describe('user auth service', function () {
 				expect(err.message).to.equal('no auth providers provided');
 			}
 		});
-		it('should throw an error when no user id is provided', function(){
+		it('should throw an error when no user id is provided', function () {
 			'use strict';
 			const groupId              = ObjectId();
 			const detailsToBeSanitised = {
@@ -109,7 +109,7 @@ describe('user auth service', function () {
 				expect(err.message).to.equal('invalid user id provided');
 			}
 		});
-		it('should throw an error when no group id is provided', function(){
+		it('should throw an error when no group id is provided', function () {
 			'use strict';
 			const groupId              = ObjectId();
 			const detailsToBeSanitised = {
@@ -129,8 +129,8 @@ describe('user auth service', function () {
 		})
 	});
 	describe('object creation', function () {
-		const saveStub = sinon.stub(UserAuth.prototype, 'save');
-		const preStub = sinon.stub(UserAuth.prototype, 'pre').resolves(true);
+		const saveStub   = sinon.stub(UserAuth.prototype, 'save');
+		const preStub    = sinon.stub(UserAuth.prototype, 'pre').resolves(true);
 		mongoose.Promise = Promise;
 
 		beforeEach(function () {
@@ -142,9 +142,9 @@ describe('user auth service', function () {
 			preStub.restore();
 		});
 		it('should successfully create an object', async function () {
-			const userId = ObjectId();
-			const groupId = ObjectId();
-			const testDetails = {
+			const userId         = ObjectId();
+			const groupId        = ObjectId();
+			const testDetails    = {
 				foo: 'bar',
 				bar: 'baz',
 				email: 'joewemyss3@gmail.com',

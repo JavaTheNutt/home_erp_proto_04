@@ -1,7 +1,7 @@
 const expect   = require('chai').expect;
 const mongoose = require('mongoose');
 
-const UserGroup = require('../../../../api/models/db/UserGroup');
+const UserGroup = require('../../../../api/models/db/UserGroup').model;
 const User      = require('../../../../api/models/db/User').model;
 const config    = require('../../../../config');
 const testUtils = require('../../test_util');
@@ -79,7 +79,7 @@ describe('user group', function () {
 			}
 		});
 		it('should fail when no group name is provided', async function () {
-			const user      = new User({
+			const user  = new User({
 				email: 'joewemyss3@gmail.com',
 				firstName: 'joe',
 				surname: 'wemyss'

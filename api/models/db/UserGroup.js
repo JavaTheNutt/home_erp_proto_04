@@ -6,9 +6,12 @@ const UserGroupSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	users:[UserSchema]
+	users: [UserSchema]
 }, {collection: 'user_group'});
 
 const UserGroupModel = mongoose.model('UserGroup', UserGroupSchema);
 
-module.exports = {model: UserGroupModel, schema: UserGroupSchema};
+module.exports = {
+	model: UserGroupModel,
+	schema: UserGroupSchema
+};

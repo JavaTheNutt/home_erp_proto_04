@@ -19,12 +19,12 @@ describe('User model', function () {
 		});
 		it('should fail validation when the email is improperly formatted', function () {
 			const user = new UserModel({email: 'joe'});
-			const err = user.validateSync();
+			const err  = user.validateSync();
 			expect(err.errors.email.message).to.equal('email is improperly formatted');
 		});
 		it('should fail validation when no email is provided', function () {
 			const user = new UserModel({});
-			const err = user.validateSync();
+			const err  = user.validateSync();
 			expect(err.errors.email.message).to.equal('Path `email` is required.')
 		})
 	})
