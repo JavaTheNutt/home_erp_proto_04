@@ -127,5 +127,49 @@ describe('user auth service', function () {
 				expect(err.message).to.equal('invalid group id provided');
 			}
 		})
+	});
+	describe('object creation', function () {
+		const saveStub = sinon.stub(UserAuth.prototype, 'save');
+		const preStub = sinon.stub(UserAuth.prototype, 'pre').resolves(true);
+		mongoose.Promise = Promise;
+
+		beforeEach(function () {
+			saveStub.reset();
+			preStub.reset();
+		});
+		after(function () {
+			saveStub.restore();
+			preStub.restore();
+		});
+		it('should successfully create an object', async function () {
+			const userId = ObjectId();
+			const groupId = ObjectId();
+			const testDetails = {
+				foo: 'bar',
+				bar: 'baz',
+				email: 'joewemyss3@gmail.com',
+				user: userId,
+				group: groupId,
+				authProviders: [{
+					name: 'firebase',
+					identifier: 'test'
+				}],
+				roles: ['group_admin']
+			};
+			const expectedOutput = {
+				_id: 'someidhere',
+				email: 'joewemyss3@gmail.com',
+				user: userId,
+				group: groupId,
+				authProviders: [{
+					name: 'firebase',
+					identifier: 'test'
+				}],
+				roles: ['group_admin']
+			};
+			saveStub.resolves(expectedOutput);
+			const result = await userAuthService.createUserAuth(testDetails);
+			expect(result._id).to.exist;
+		})
 	})
 });

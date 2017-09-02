@@ -1,5 +1,6 @@
 const Logger = require('../util/Logger')('USER_AUTH_SERVICE');
 const validation = require('../services/validation');
+const UserAuth = require('../models/db/UserAuth');
 
 module.exports = {
 	formatDetails(details){
@@ -27,5 +28,11 @@ module.exports = {
 			authProviders: details.authProviders,
 			roles: details.roles
 		}
+	},
+	async createUserAuth(details){
+		'use strict';
+		Logger.info(`attempting to create auth record`);
+		const newAuth = new UserAuth(this.formatDetails(details));
+		return await newAuth.save();
 	}
 };
