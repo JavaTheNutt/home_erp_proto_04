@@ -1,5 +1,6 @@
 const mongoose           = require('mongoose');
 const Logger             = require('../../util/Logger')('AUTH_PROVIDER_MODEL');
+const authService = require('../../services/userAuthService');
 const AuthProviderSchema = mongoose.Schema({
 	name: {
 		type: String,

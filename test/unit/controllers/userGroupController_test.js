@@ -13,7 +13,8 @@ describe('user group controller', function () {
 	describe('add group', function () {
 		const userId         = ObjectId();
 		const groupId        = ObjectId();
-		let req, res, next, createGroupStub, createAuthStub;
+		const sampleHash = '$2a$10$VjoTsEslNeeOTwY7tMGTh.VbwWp6HI8WuAG1gq6XP1Bdqg/Q4fmqm';
+		let req, res, next, createGroupStub, createAuthStub, hashPasswordStub;
 		const groupToBeSaved = {
 			name: 'testgroup',
 			users: [{
@@ -26,12 +27,13 @@ describe('user group controller', function () {
 			email: groupToBeSaved.users[0].email,
 			user: userId,
 			group: groupId,
-			authProviders: [{password: 'password'}],
+			authProviders: [{password: sampleHash}],
 			roles: ['group_admin']
 		};
 		before(function () {
 			createGroupStub = sinon.stub(userGroupService, 'createGroup');
-			createAuthStub  = sinon.stub(userAuthService, 'createUserAuth')
+			createAuthStub  = sinon.stub(userAuthService, 'createUserAuth');
+			hashPasswordStub = sinon.stub(userAuthService, 'hashPassword');
 		});
 		beforeEach(function () {
 			req  = {
@@ -60,10 +62,13 @@ describe('user group controller', function () {
 		afterEach(function () {
 			createGroupStub.reset();
 			createAuthStub.reset();
+			hashPasswordStub.reset();
+
 		});
 		after(function () {
 			createGroupStub.restore();
 			createAuthStub.restore();
+			hashPasswordStub.restore();
 		});
 		it('should successfully add a group', async function () {
 			createGroupStub.withArgs(req.body.group).resolves({
@@ -83,10 +88,11 @@ describe('user group controller', function () {
 				group: groupId,
 				authProviders: [{
 					_id: ObjectId(),
-					password: 'password'
+					password: sampleHash
 				}],
 				roles: ['group_admin']
 			});
+			hashPasswordStub.withArgs(req.body.group.users[0].auth.authProviders[0].password).resolves(sampleHash);
 			await userGroupController.createNewGroup(req, res, next);
 			expect(createGroupStub).to.be.calledWith(req.body.group);
 			expect(createGroupStub).to.be.calledBefore(createAuthStub);

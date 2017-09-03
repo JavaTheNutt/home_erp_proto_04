@@ -75,6 +75,20 @@ describe('user auth', function () {
 			const result       = await userAuth.save();
 			expect(result._id).to.exist;
 		});
+		it('should successfully create a self auth object', async function () {
+			const authProvider = new AuthProvider({
+				password: 'password'
+			});
+			const userAuth     = new UserAuth({
+				email: 'test@test.com',
+				user: userId,
+				group: groupId,
+				authProviders: [authProvider],
+				roles: ['group_admin']
+			});
+			const result       = await userAuth.save();
+			expect(result._id).to.exist;
+		});
 		it('should fail when an incorrect userId is present', async function () {
 			'use strict';
 			const authProvider = new AuthProvider({

@@ -1,7 +1,7 @@
 const Logger     = require('../util/Logger')('USER_AUTH_SERVICE');
 const validation = require('../services/validation');
 const UserAuth   = require('../models/db/UserAuth');
-
+const bcrypt = require('bcryptjs');
 module.exports = {
 	formatDetails(details) {
 		'use strict';
@@ -33,6 +33,25 @@ module.exports = {
 		'use strict';
 		Logger.info(`attempting to create auth record`);
 		const newAuth = new UserAuth(this.formatDetails(details));
-		return await newAuth.save();
+		try{
+			return await newAuth.save();
+		}catch(err){
+			Logger.warn(`error saving auth object: ${err}`);
+			throw new Error('error while saving auth object')
+		}
+
+	},
+	async hashPassword(password){
+		'use strict';
+		Logger.verbose(`attempting to hash password: ${password}`);
+		let hashedPw;
+		try {
+			hashedPw = await bcrypt.hash(password, 10);
+		} catch (e) {
+			Logger.error(`password hash failed: ${e}`);
+			throw new Error('password hash failed');
+		}
+		Logger.verbose(`password hashed successfully`);
+		return hashedPw;
 	}
 };

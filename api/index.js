@@ -1,11 +1,15 @@
 const restify  = require('restify');
 const mongoose = require('mongoose');
-
-
+const restifyPlugins = require('restify-plugins');
 const config = require('../config');
 const Logger = require('./util/Logger')('INDEX');
 
 const server = restify.createServer({});
+
+server.use(restifyPlugins.bodyParser());
+server.use(restifyPlugins.queryParser());
+server.use(restifyPlugins.authorizationParser());
+
 let mongoUrl;
 switch (config.env) {
 	case 'development':
@@ -27,7 +31,7 @@ db.once('open', () => {
 	'use strict';
 	Logger.info(`database connection opened`);
 });
-
+require('./routes/unsecured')(server);
 server.listen(config.port, () => {
 	Logger.info(`server running`);
 });
