@@ -13,7 +13,7 @@ describe('user group controller', function () {
 	describe('add group', function () {
 		const userId         = ObjectId();
 		const groupId        = ObjectId();
-		const sampleHash = '$2a$10$VjoTsEslNeeOTwY7tMGTh.VbwWp6HI8WuAG1gq6XP1Bdqg/Q4fmqm';
+		const sampleHash     = '$2a$10$VjoTsEslNeeOTwY7tMGTh.VbwWp6HI8WuAG1gq6XP1Bdqg/Q4fmqm';
 		let req, res, next, createGroupStub, createAuthStub, hashPasswordStub;
 		const groupToBeSaved = {
 			name: 'testgroup',
@@ -31,8 +31,8 @@ describe('user group controller', function () {
 			roles: ['group_admin']
 		};
 		before(function () {
-			createGroupStub = sinon.stub(userGroupService, 'createGroup');
-			createAuthStub  = sinon.stub(userAuthService, 'createUserAuth');
+			createGroupStub  = sinon.stub(userGroupService, 'createGroup');
+			createAuthStub   = sinon.stub(userAuthService, 'createUserAuth');
 			hashPasswordStub = sinon.stub(userAuthService, 'hashPassword');
 		});
 		beforeEach(function () {

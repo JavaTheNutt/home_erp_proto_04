@@ -172,13 +172,13 @@ describe('user auth service', function () {
 			expect(result._id).to.exist;
 		})
 	})
-	describe('password hashing', function(){
+	describe('password hashing', function () {
 		'use strict';
 		it('should successfully hash a password', async function () {
-			try{
+			try {
 				const hashedPassword = await userAuthService.hashPassword('password');
 				expect(hashedPassword.length).to.equal(60);
-			}catch(err){
+			} catch (err) {
 
 			}
 		})

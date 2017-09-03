@@ -19,11 +19,17 @@ module.exports         = {
 
 		let authToBeSaved;
 		let authProvDetails = {};
-		if(req.body.group.users[0].auth.authProviders[0].identifier){
+		if (req.body.group.users[0].auth.authProviders[0].identifier) {
 			authProvDetails.identifier = req.body.group.users[0].auth.authProviders[0].identifier;
-			authProvDetails.name = req.body.group.users[0].auth.authProviders[0].name;
-		}else{
-			authProvDetails.password = await authService.hashPassword(req.body.group.users[0].auth.authProviders[0].password)
+			authProvDetails.name       = req.body.group.users[0].auth.authProviders[0].name;
+		} else {
+			try {
+				authProvDetails.password = await authService.hashPassword(req.body.group.users[0].auth.authProviders[0].password)
+			} catch (err) {
+				Logger.warn(`password could not be hashed`);
+				await userGroupService.removeGroupById(groupToBeSaved._id);
+				return next(new errors.BadRequestError(err, 'there was a problem with the request'));
+			}
 		}
 		try {
 			authToBeSaved = await authService.createUserAuth({
@@ -35,6 +41,7 @@ module.exports         = {
 			});
 		} catch (err) {
 			Logger.warn(`auth object could not be saved`);
+			await userGroupService.removeGroupById(groupToBeSaved._id);
 			return next(new errors.BadRequestError(err, 'there was a problem with the request'));
 		}
 		return res.send(200, {message: 'user group added successfully'});

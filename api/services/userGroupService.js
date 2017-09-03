@@ -39,5 +39,17 @@ module.exports       = {
 			});
 		});
 		return returnableDetails;
+	},
+	async removeGroupById(groupId) {
+		'use strict';
+		Logger.info(`attempting to remove group with id: ${groupId}`);
+		try {
+			await UserGroup.findByIdAndRemove(groupId);
+			Logger.verbose(`item removed`);
+			return true;
+		} catch (e) {
+			Logger.warn(`error removing object`);
+			throw new Error('unable to remove specified item');
+		}
 	}
 };

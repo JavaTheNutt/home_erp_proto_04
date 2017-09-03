@@ -1,8 +1,8 @@
-const restify  = require('restify');
-const mongoose = require('mongoose');
+const restify        = require('restify');
+const mongoose       = require('mongoose');
 const restifyPlugins = require('restify-plugins');
-const config = require('../config');
-const Logger = require('./util/Logger')('INDEX');
+const config         = require('../config');
+const Logger         = require('./util/Logger')('INDEX');
 
 const server = restify.createServer({});
 
