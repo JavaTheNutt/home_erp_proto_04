@@ -160,3 +160,4 @@ $RECYCLE.BIN/
 /log/
 /.nyc_output/
 /testData/
+/firebase_service_key.json

@@ -26,7 +26,7 @@ module.exports         = {
 			try {
 				authProvDetails.password = await authService.hashPassword(req.body.group.users[0].auth.authProviders[0].password)
 			} catch (err) {
-				Logger.warn(`password could not be hashed`);
+				Logger.warn(`password could not be hashed, ${err}`);
 				await userGroupService.removeGroupById(groupToBeSaved._id);
 				return next(new errors.BadRequestError(err, 'there was a problem with the request'));
 			}
@@ -40,7 +40,7 @@ module.exports         = {
 				roles: req.body.group.users[0].roles
 			});
 		} catch (err) {
-			Logger.warn(`auth object could not be saved`);
+			Logger.warn(`auth object could not be saved, ${err}`);
 			await userGroupService.removeGroupById(groupToBeSaved._id);
 			return next(new errors.BadRequestError(err, 'there was a problem with the request'));
 		}

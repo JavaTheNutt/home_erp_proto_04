@@ -57,5 +57,22 @@ module.exports   = {
 		}
 		Logger.verbose(`password hashed successfully`);
 		return hashedPw;
+	},
+	async findByAuthIdentifier(id){
+		'use strict';
+		let result;
+		Logger.info(`attempting to find user with the auth identifier: ${id}`);
+		try {
+			result = await UserAuth.findOne({'authProviders.identifier': id});
+			Logger.info(`result of search: ${JSON.stringify(result)}`);
+		} catch (e) {
+			Logger.error(`error  finding data, ${e}`);
+			throw e;
+		}
+		return result;
+	},
+	async authenticateFirebase(){
+		'use strict';
+
 	}
 };

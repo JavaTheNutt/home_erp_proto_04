@@ -51,5 +51,42 @@ module.exports       = {
 			Logger.warn(`error removing object`);
 			throw new Error('unable to remove specified item');
 		}
+	},
+	async findGroupById(id){
+		'use strict';
+		Logger.info(`attempting to find group with id ${id}`);
+		let group;
+		try{
+			group = await UserGroup.findById(id);
+			Logger.info(`group found`);
+			Logger.verbose(`group: ${group}`);
+			return group;
+		}catch(err){
+			Logger.error(`error finding group`);
+			Logger.error(`error`);
+			throw new Error(err);
+		}
+	},
+	formatGroupForDelivery(group, userId){
+		'use strict';
+		Logger.info(`attempting to format group: ${JSON.stringify(group)} with user ${userId}`);
+		const returnedGroup = {
+			name: group.name,
+			users:[]
+		};
+		group.users.forEach((elem) =>{
+			Logger.info(`user currently being tested: ${JSON.stringify(elem)}`);
+			Logger.verbose(`comparing ${elem._id} to ${userId}`);
+			if(elem._id.equals(userId)){
+				Logger.info(`current user found`);
+				returnedGroup.currentUser = elem;
+			} else{
+				Logger.info(`other user found`);
+				returnedGroup.users.push(elem);
+			}
+			Logger.info(`group formatted`);
+			Logger.verbose(`new group: ${JSON.stringify(returnedGroup)}`);
+			return returnedGroup;
+		})
 	}
 };
