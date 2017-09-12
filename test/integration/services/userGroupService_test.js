@@ -19,11 +19,9 @@ describe('user group service', function () {
 		beforeEach(async function () {
 			const tmpGroup = await userService.createGroup({
 				name: 'stark',
-				users: [{
-					email: 'eddard@stark.com',
-					firstName: 'eddard',
-					surname: 'stark'
-				}]
+				email: 'eddard@stark.com',
+				firstName: 'eddard',
+				surname: 'stark'
 			});
 			groupId        = tmpGroup._id;
 		});

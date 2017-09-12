@@ -3,6 +3,10 @@ const validation = require('../services/validation');
 const UserAuth   = require('../models/db/UserAuth');
 const bcrypt     = require('bcryptjs');
 module.exports   = {
+	createDetails(details) {
+		'use strict';
+
+	},
 	formatDetails(details) {
 		'use strict';
 		if (!details.email || !validation.validateEmail(details.email)) {
@@ -21,17 +25,22 @@ module.exports   = {
 			Logger.warn(`no auth providers specified, aborting`);
 			throw new Error('no auth providers provided');
 		}
+		if(details.authProviders[0].identifier && !details.authProviders[0].name){
+		  Logger.warn(`an auth provider identifier was provided, but not a name`);
+		  throw new Error('if an identifier is provided, a name must be provided also');
+    }
 		return {
 			email: details.email,
 			user: details.user,
 			group: details.group,
 			authProviders: details.authProviders,
-			roles: details.roles
+			roles: [details.roles]
 		}
 	},
 	async createUserAuth(details) {
 		'use strict';
 		Logger.info(`attempting to create auth record`);
+		Logger.verbose(`details: ${details}`);
 		const newAuth = new UserAuth(this.formatDetails(details));
 		try {
 			return await newAuth.save();
@@ -58,7 +67,7 @@ module.exports   = {
 		Logger.verbose(`password hashed successfully`);
 		return hashedPw;
 	},
-	async findByAuthIdentifier(id){
+	async findByAuthIdentifier(id) {
 		'use strict';
 		let result;
 		Logger.info(`attempting to find user with the auth identifier: ${id}`);
@@ -71,7 +80,7 @@ module.exports   = {
 		}
 		return result;
 	},
-	async authenticateFirebase(){
+	async authenticateFirebase() {
 		'use strict';
 
 	}

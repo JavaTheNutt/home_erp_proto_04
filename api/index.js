@@ -1,12 +1,12 @@
-const restify        = require('restify');
-const mongoose       = require('mongoose');
-const restifyPlugins = require('restify-plugins');
-const config         = require('../config');
-const Logger         = require('./util/Logger')('INDEX');
-const admin = require('firebase-admin');
+const restify                = require('restify');
+const mongoose               = require('mongoose');
+const restifyPlugins         = require('restify-plugins');
+const config                 = require('../config');
+const Logger                 = require('./util/Logger')('INDEX');
+const admin                  = require('firebase-admin');
 const firebaseServiceAccount = require('../firebase_service_key.json');
-const corsMiddleware = require('restify-cors-middleware');
-const cors = corsMiddleware({
+const corsMiddleware         = require('restify-cors-middleware');
+const cors                   = corsMiddleware({
 	origins: ['*'],
 	allowHeaders: ['*', 'X-Requested-With', 'token', 'content-type', 'origin', 'authProvider']
 });
@@ -15,12 +15,18 @@ admin.initializeApp({
 	credential: admin.credential.cert(firebaseServiceAccount),
 	databaseURL: 'https://finance-tracker-1cc05.firebaseio.com/'
 });
-const server = restify.createServer({});
+const server = restify.createServer({
+  log: Logger
+});
 
 server.use(restifyPlugins.bodyParser());
 server.use(restifyPlugins.queryParser());
 server.use(restifyPlugins.authorizationParser());
 server.pre(cors.preflight);
+server.pre((req, res, next)=>{
+  'use strict';
+  req.log.info({req}, 'REQUEST');
+});
 server.use(cors.actual);
 
 let mongoUrl;

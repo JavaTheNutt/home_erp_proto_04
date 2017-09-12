@@ -13,38 +13,49 @@ module.exports         = {
 		} catch (err) {
 			Logger.warn(`group could not be saved, sending error response`);
 			// noinspection Annotator
-			return next(new errors.BadRequestError(err, 'there was a problem with the request'));
+			return next(new errors.BadRequestError(err.message));
 		}
-		Logger.verbose(`group details have been created without error`);
-
+		Logger.info(`group details have been created without error`);
+		Logger.verbose(`current auth details: ${JSON.stringify(req.body.group.auth)}`);
+		//fixme : do something about the code below, its ugly
 		let authToBeSaved;
 		let authProvDetails = {};
-		if (req.body.group.users[0].auth.authProviders[0].identifier) {
-			authProvDetails.identifier = req.body.group.users[0].auth.authProviders[0].identifier;
-			authProvDetails.name       = req.body.group.users[0].auth.authProviders[0].name;
+		if (req.body.group.auth.identifier) {
+		  Logger.info(`identifier found, assuming third party auth provider`);
+			authProvDetails.identifier = req.body.group.auth.identifier;
+			authProvDetails.name       = req.body.group.auth.name;
 		} else {
+		  Logger.info(`no identifier found, assuming password auth`);
 			try {
-				authProvDetails.password = await authService.hashPassword(req.body.group.users[0].auth.authProviders[0].password)
+				authProvDetails.password = await authService.hashPassword(req.body.group.auth.password);
+				Logger.info(`password hashed successfully`);
 			} catch (err) {
 				Logger.warn(`password could not be hashed, ${err}`);
 				await userGroupService.removeGroupById(groupToBeSaved._id);
-				return next(new errors.BadRequestError(err, 'there was a problem with the request'));
+				return next(new errors.BadRequestError(err.message));
 			}
 		}
+		Logger.info(`auth details processed without error`);
 		try {
 			authToBeSaved = await authService.createUserAuth({
-				email: req.body.group.users[0].email,
+				email: req.body.group.email,
 				user: groupToBeSaved.users[0]._id,
 				group: groupToBeSaved._id,
 				authProviders: [authProvDetails],
-				roles: req.body.group.users[0].roles
+				roles: ['group_admin']
 			});
 		} catch (err) {
 			Logger.warn(`auth object could not be saved, ${err}`);
-			await userGroupService.removeGroupById(groupToBeSaved._id);
-			return next(new errors.BadRequestError(err, 'there was a problem with the request'));
+			await userGroupService.removeGroupById(groupToBeSaved._id); //fixme no error check here
+			return next(new errors.BadRequestError(err.message));
 		}
+		Logger.info(`details added successfully, returning 200 response`);
 		return res.send(200, {message: 'user group added successfully'});
+	},
+	async tmpCreateNewGroup(req, res, next) {
+		'use strict';
+		Logger.info(`user group controller attempting to create new user group and auth records`);
+		Logger.verbose(`details: ${JSON.stringify(req.body)}`);
 
 	}
 };

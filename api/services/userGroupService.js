@@ -19,26 +19,18 @@ module.exports       = {
 			Logger.warn(`no name found to format group, throwing error`);
 			throw new Error('no valid group name provided');
 		}
-		if (!details.users || !Array.isArray(details.users) || details.users.length < 1) {
-			Logger.warn(`no users found to format group, throwing error`);
-			throw new Error('at least one user must be provided to create the group');
+		if (!details.email || !emailValidator(details.email)) {
+			Logger.warn(`no user email found to format group, throwing error`);
+			throw new Error('no valid user email provided');
 		}
-		const returnableDetails = {
+		return {
 			name: details.name,
-			users: []
+			users: [{
+				email: details.email,
+				firstName: details.firstName,
+				surname: details.surname
+			}]
 		};
-		details.users.forEach(user => {
-			if (!user.email || !emailValidator(user.email)) {
-				Logger.warn(`no user email found to format group, throwing error`);
-				throw new Error('no valid user email provided');
-			}
-			returnableDetails.users.push({
-				email: user.email,
-				firstName: user.firstName,
-				surname: user.surname
-			});
-		});
-		return returnableDetails;
 	},
 	async removeGroupById(groupId) {
 		'use strict';
@@ -52,35 +44,35 @@ module.exports       = {
 			throw new Error('unable to remove specified item');
 		}
 	},
-	async findGroupById(id){
+	async findGroupById(id) {
 		'use strict';
 		Logger.info(`attempting to find group with id ${id}`);
 		let group;
-		try{
+		try {
 			group = await UserGroup.findById(id);
 			Logger.info(`group found`);
 			Logger.verbose(`group: ${group}`);
 			return group;
-		}catch(err){
+		} catch (err) {
 			Logger.error(`error finding group`);
 			Logger.error(`error`);
 			throw new Error(err);
 		}
 	},
-	formatGroupForDelivery(group, userId){
+	formatGroupForDelivery(group, userId) {
 		'use strict';
 		Logger.info(`attempting to format group: ${JSON.stringify(group)} with user ${userId}`);
 		const returnedGroup = {
 			name: group.name,
-			users:[]
+			users: []
 		};
-		group.users.forEach((elem) =>{
+		group.users.forEach((elem) => {
 			Logger.info(`user currently being tested: ${JSON.stringify(elem)}`);
 			Logger.verbose(`comparing ${elem._id} to ${userId}`);
-			if(elem._id.equals(userId)){
+			if (elem._id.equals(userId)) {
 				Logger.info(`current user found`);
 				returnedGroup.currentUser = elem;
-			} else{
+			} else {
 				Logger.info(`other user found`);
 				returnedGroup.users.push(elem);
 			}

@@ -27,7 +27,7 @@ describe('user group controller', function () {
 			email: groupToBeSaved.users[0].email,
 			user: userId,
 			group: groupId,
-			authProviders: [{password: sampleHash}],
+			authProviders: [{name: 'firebase', identifier:'uu0SMEK2itPcoQrvpfKXXOjZ5cL2'}],
 			roles: ['group_admin']
 		};
 		before(function () {
@@ -40,17 +40,13 @@ describe('user group controller', function () {
 				body: {
 					group: {
 						name: 'testgroup',
-						users: [{
-							email: 'test@test.com',
-							firstName: 'test',
-							surname: 'test',
-							auth: {
-								authProviders: [{
-									password: 'password'
-								}]
-							},
-							roles: ['group_admin']
-						}]
+						email: 'test@test.com',
+						firstName: 'test',
+						surname: 'test',
+						auth:{
+							identifier: 'uu0SMEK2itPcoQrvpfKXXOjZ5cL2',
+							name: 'firebase'
+						}
 					}
 				}
 			};
@@ -88,11 +84,12 @@ describe('user group controller', function () {
 				group: groupId,
 				authProviders: [{
 					_id: ObjectId(),
-					password: sampleHash
+					name: authToBeSaved.name,
+					identifier: authToBeSaved.identifier
 				}],
 				roles: ['group_admin']
 			});
-			hashPasswordStub.withArgs(req.body.group.users[0].auth.authProviders[0].password).resolves(sampleHash);
+			//hashPasswordStub.withArgs(req.body.group.users[0].auth.authProviders[0].password).resolves(sampleHash);
 			await userGroupController.createNewGroup(req, res, next);
 			expect(createGroupStub).to.be.calledWith(req.body.group);
 			expect(createGroupStub).to.be.calledBefore(createAuthStub);

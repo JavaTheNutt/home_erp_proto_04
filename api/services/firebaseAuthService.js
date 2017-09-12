@@ -1,12 +1,12 @@
-const admin = require('firebase-admin');
-const Logger = require('../util/Logger')('FIREBASE_SERVICE');
+const admin    = require('firebase-admin');
+const Logger   = require('../util/Logger')('FIREBASE_SERVICE');
 module.exports = {
-	async verifyFirebaseToken(token){
+	async verifyFirebaseToken(token) {
 		'use strict';
 		Logger.info(`attempting to verify token`);
 		let decodedToken;
 		try {
-			decodedToken =  await admin.auth().verifyIdToken(token);
+			decodedToken = await admin.auth().verifyIdToken(token);
 			Logger.info(`token validated successfully`);
 			return decodedToken.sub;
 		} catch (err) {
