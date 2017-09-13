@@ -32,6 +32,7 @@ module.exports       = {
 			}]
 		};
 	},
+  //fixme: not tested
 	async removeGroupById(groupId) {
 		'use strict';
 		Logger.info(`attempting to remove group with id: ${groupId}`);
@@ -44,6 +45,7 @@ module.exports       = {
 			throw new Error('unable to remove specified item');
 		}
 	},
+  //fixme: not tested
 	async findGroupById(id) {
 		'use strict';
 		Logger.info(`attempting to find group with id ${id}`);
@@ -59,6 +61,7 @@ module.exports       = {
 			throw new Error(err);
 		}
 	},
+  //fixme, this function is not tested
 	formatGroupForDelivery(group, userId) {
 		'use strict';
 		Logger.info(`attempting to format group: ${JSON.stringify(group)} with user ${userId}`);

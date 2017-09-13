@@ -12,10 +12,17 @@ module.exports   = {
 		'use strict';
 		Logger.info(`attempting to create user auth details in service`);
 		Logger.verbose(`details to be formatted: ${JSON.stringify(details)}`);
+		Logger.verbose(`new group being created, assigning user as admin`);
+		details.roles = ['group_admin'];
+		Logger.verbose(`new group details ${JSON.stringify(details)}`);
+		//fixme: test this
 		if(!details){
+		  Logger.warn(`details were not provided to createDetails(), aborting`);
 		  throw new Error('no details provided', 500)
     }
+    Logger.verbose(`details found, proceeding`);
     try {
+
       details = this.formatDetails(details);
       Logger.verbose(`details have been formatted: ${JSON.stringify(details)}`);
       let authProviderDetails;
@@ -27,10 +34,11 @@ module.exports   = {
         authProviderDetails = await this.createSelfAuthDetails({password: details.authProviders[0].password});
       }
       Logger.info(`auth details created successfully`);
-      Logger.verbose(`details ${details}`);
+      Logger.verbose(`details ${JSON.stringify(details)}`);
       Logger.verbose(`adding auth details to details`);
       details.authProvider = authProviderDetails;
-      Logger.verbose(`details are now: ${details}`);
+      Logger.verbose(`details are now: ${JSON.stringify(details)}`);
+      Logger.verbose(`calling create user auth with above details`);
       return await this.createUserAuth(details);
     } catch (e) {
       Logger.warn(`there was an error while creating the group: ${e}`);

@@ -28,7 +28,7 @@ describe('user group controller', function () {
           email: 'test@test.com',
           firstName: 'test',
           surname: 'test',
-          auth: {
+          authProvider: {
             password: 'password'
           }
         }
@@ -46,8 +46,8 @@ describe('user group controller', function () {
   after(function (done) {
     testUtils.closeConnection(done);
     badRequestSpy.restore();
-    res.send.reset();
-    next.reset();
+    res.send.restore();
+    next.restore();
   });
   describe('create new group', function () {
     it('should call res.send with a status of 200 for third-party auth', async function () {
@@ -55,7 +55,7 @@ describe('user group controller', function () {
       expect(res.send).to.be.calledWith(200, {message: 'user group added successfully'})
     });
     it('should call res.send with a status of 200 for password auth', async function () {
-      req.body.group.auth = {
+      req.body.group.authProvider = {
         identifier : 'testId',
         name: 'firebase'
       };
@@ -63,7 +63,7 @@ describe('user group controller', function () {
       expect(res.send).to.be.calledWith(200, {message: 'user group added successfully'})
     });
     it('should call next with a bad request error when a identifier is specified, but not a name', async function () {
-      req.body.group.auth = {
+      req.body.group.authProvider = {
         identifier: 'firebase'
       };
       await userGroupCtrl.createNewGroup(req, res, next);

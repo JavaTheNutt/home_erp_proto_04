@@ -12,7 +12,7 @@ const User            = require('../../../api/models/db/User');
 
 const mongoose   = require('mongoose');
 mongoose.Promise = Promise;
-//fixme test framework quitting unexpectedly.
+
 describe('user auth service', function () {
   let details, userId, groupId;
   before(function () {
@@ -26,6 +26,14 @@ describe('user auth service', function () {
     }
   });
   beforeEach(function () {
+    details = {
+      email: 'joewemyss3@gmail.com',
+      authProvider: {
+        name: 'firebase',
+        identifier: 'test'
+      },
+      roles: ['group_admin']
+    }
     userId        = ObjectId();
     groupId       = ObjectId();
     details.user  = userId;
@@ -134,7 +142,7 @@ describe('user auth service', function () {
         saveStub.reset();
         formatSpy.reset();
         preStub.reset();
-        hashPasswordStub.reset();
+        userAuthService.hashPassword.reset();
         removeGroupStub.reset();
         createSelfAuthSpy.reset();
         createThirdPartyAuthSpy.reset();
@@ -148,21 +156,19 @@ describe('user auth service', function () {
         createSelfAuthSpy.restore();
         createThirdPartyAuthSpy.restore();
       });
-      describe('object saving', function () {
+      describe('create user auth', function () {
         it('should successfully save an object', async function () {
           details.foo = 'bar';
           details.bar = 'bar';
           saveStub.resolves(outputDetails);
           const result = await userAuthService.createUserAuth(details);
-          expect(formatSpy).to.be.calledOnce;
-          expect(formatSpy).to.be.calledBefore(saveStub);
           expect(saveStub).to.be.calledOnce;
           expect(result._id).to.exist;
           expect(result.foo).to.not.exist;
           expect(result.bar).to.not.exist;
         });
       });
-      describe('object creation', function () {
+      describe('create details function', function () {
         it('should successfully create an object with third party auth', async function () {
           'use strict';
           details.foo  = 'bar';
@@ -178,20 +184,17 @@ describe('user auth service', function () {
           expect(createThirdPartyAuthSpy).to.be.calledOnce;
           expect(createThirdPartyAuthSpy).to.be.calledBefore(saveStub);
           expect(saveStub).to.be.calledOnce;
-        })
+        });
         it('should successfully create an object with self auth', async function () {
           'use strict';
-          details.authProviders = [{password: 'pa$$word'}];
-          const result          = await userAuthService.createUserAuth(details);
+          details.authProvider = [{password: 'pa$$word'}];
+          const result          = await userAuthService.createDetails(details);
           hashPasswordStub.withArgs('pa$$word').resolves(sampleHash);
           saveStub.resolves(outputDetails);
-          expect(hashPasswordStub).to.be.calledOnce;
-          expect(formatSpy).to.be.calledOnce;
-          expect(formatSpy).to.be.calledBefore(createSelfAuthSpy);
-          expect(formatSpy).to.be.calledWith(details);
-          expect(createSelfAuthSpy).to.be.calledOnce;
+          //expect(hashPasswordStub, 'hash password stub was not called exactly once').to.be.calledOnce;
+          expect(createSelfAuthSpy, 'self auth spy was not called once').to.be.calledOnce;
           expect(createThirdPartyAuthSpy).to.not.be.called;
-          expect(createThirdPartyAuthSpy).to.be.calledBefore(saveStub);
+          expect(createSelfAuthSpy).to.be.calledBefore(saveStub);
           expect(saveStub).to.be.calledOnce;
         })
       });
