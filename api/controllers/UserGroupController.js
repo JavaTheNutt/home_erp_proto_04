@@ -32,7 +32,7 @@ module.exports         = {
 			} catch (err) {
 				Logger.warn(`password could not be hashed, ${err}`);
 				await userGroupService.removeGroupById(groupToBeSaved._id);
-				return next(new errors.BadRequestError(err.message));
+				return next(new errors.BadRequestError(err.message)); //fixme: passing non custom error to middleware
 			}
 		}
 		Logger.info(`auth details processed without error`);

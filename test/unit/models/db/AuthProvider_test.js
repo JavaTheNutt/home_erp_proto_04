@@ -13,18 +13,21 @@ describe('auth provider', function () {
 			expect(auth._id).to.exist;
 			expect(auth.name).to.equal('firebase');
 			expect(auth.identifier).to.equal('test');
-			expect(auth.validateSync()).to.not.exist;
+			// noinspection JSCheckFunctionSignatures
+      expect(auth.validateSync()).to.not.exist;
 		});
 		it('should create a valid self auth model', function () {
 			const auth = new AuthProvider({password: 'password'});
 			expect(auth._id).to.exist;
 			expect(auth.name).to.equal('self');
-			expect(auth.validateSync()).to.not.exist;
+			// noinspection JSCheckFunctionSignatures
+      expect(auth.validateSync()).to.not.exist;
 		});
 		it('should fail if an identifier is passed but no name', function () {
 			const auth = new AuthProvider({identifier: 'test'});
 			try {
-				auth.validateSync();
+				// noinspection JSCheckFunctionSignatures
+        auth.validateSync();
 			} catch (e) {
 				expect(e.message).to.equal('if an identifier is provided, a name must be provided also');
 			}
@@ -32,7 +35,8 @@ describe('auth provider', function () {
 		it('should fail if there is no password or identifier present', function () {
 			const auth = new AuthProvider({name: 'firebase'});
 			try {
-				auth.validateSync();
+				// noinspection JSCheckFunctionSignatures
+        auth.validateSync();
 			} catch (e) {
 				expect(e.message).to.equal('either a password or an identifier must be provided');
 			}

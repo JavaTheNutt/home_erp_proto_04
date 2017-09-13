@@ -15,16 +15,19 @@ describe('User model', function () {
 			expect(user.surname).to.equal('wemyss');
 			expect(user.email).to.equal('joewemyss3@gmail.com');
 			expect(user._id).to.exist;
-			expect(user.validateSync()).to.not.exist;
+			// noinspection JSCheckFunctionSignatures
+      expect(user.validateSync()).to.not.exist;
 		});
 		it('should fail validation when the email is improperly formatted', function () {
 			const user = new UserModel({email: 'joe'});
-			const err  = user.validateSync();
+			// noinspection JSCheckFunctionSignatures
+      const err  = user.validateSync();
 			expect(err.errors.email.message).to.equal('email is improperly formatted');
 		});
 		it('should fail validation when no email is provided', function () {
 			const user = new UserModel({});
-			const err  = user.validateSync();
+			// noinspection JSCheckFunctionSignatures
+      const err  = user.validateSync();
 			expect(err.errors.email.message).to.equal('Path `email` is required.')
 		})
 	})

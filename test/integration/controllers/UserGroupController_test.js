@@ -1,5 +1,6 @@
 const testUtils = require('../test_util');
 const chai      = require('chai');
+// noinspection Annotator
 const expect    = chai.expect;
 const sinon     = require('sinon');
 chai.use(require('sinon-chai'));
@@ -37,6 +38,7 @@ describe('user group controller', function () {
   });
   afterEach(function (done) {
     testUtils.clearCollection([USER_GROUP_COLLECTION, USER_AUTH_COLLECTION], done);
+    // noinspection JSUnresolvedFunction
     badRequestSpy.reset();
     res.send.reset();
     next.reset();

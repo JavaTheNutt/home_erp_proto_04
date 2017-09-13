@@ -54,7 +54,7 @@ describe('user auth', function () {
 				roles: ['group_admin']
 			});
 			try {
-				const result = await userAuth.save();
+
 			} catch (e) {
 				expect(e.message.indexOf('the specified user group does not exist')).to.not.equal(-1);
 			}
@@ -103,7 +103,7 @@ describe('user auth', function () {
 				roles: ['group_admin']
 			});
 			try {
-				const result = await userAuth.save();
+
 			} catch (e) {
 				expect(e.message.indexOf('the specified user does not exist')).to.not.equal(-1);
 			}

@@ -2,46 +2,130 @@ const Logger     = require('../util/Logger')('USER_AUTH_SERVICE');
 const validation = require('../services/validation');
 const UserAuth   = require('../models/db/UserAuth');
 const bcrypt     = require('bcryptjs');
+const _ = require('lodash');
 module.exports   = {
-	createDetails(details) {
+  /**
+   * This function will handle the decisions about what type of auth will be saved
+   * @param details {object} the authentication details
+   */
+	async createDetails(details) {
 		'use strict';
-
+		Logger.info(`attempting to create user auth details in service`);
+		Logger.verbose(`details to be formatted: ${JSON.stringify(details)}`);
+		if(!details){
+		  throw new Error('no details provided', 500)
+    }
+    try {
+      details = this.formatDetails(details);
+      Logger.verbose(`details have been formatted: ${JSON.stringify(details)}`);
+      let authProviderDetails;
+      if(details.authProviders[0].identifier){
+        Logger.info(`identifier found, assuming third party auth`);
+        authProviderDetails = this.createThirdPartyAuth({name:details.authProviders[0].name, identifier: details.authProviders[0].identifier});
+      }else{
+        Logger.info(`no identifier found, assuming self auth`);
+        authProviderDetails = await this.createSelfAuthDetails({password: details.authProviders[0].password});
+      }
+      Logger.info(`auth details created successfully`);
+      Logger.verbose(`details ${details}`);
+      Logger.verbose(`adding auth details to details`);
+      details.authProvider = authProviderDetails;
+      Logger.verbose(`details are now: ${details}`);
+      return await this.createUserAuth(details);
+    } catch (e) {
+      Logger.warn(`there was an error while creating the group: ${e}`);
+      throw new Error(e.message);
+    }
 	},
+  createThirdPartyAuth(details){
+	  'use strict';
+    Logger.info(`attempting to create third party auth details`);
+    Logger.verbose(`details to be created: ${JSON.stringify(details)}`);
+    if(!details.name){
+      Logger.warn(`attempting to create nameless third party auth`);
+      throw new Error('attempting to create nameless auth');
+    }
+    if(!details.identifier){
+      Logger.warn(`attempting to create third party auth without identifier`);
+      throw new Error('attempting to create third party auth without identifier');
+    }
+    details.name = {name: details.name, identifier: details.identifier};
+    return details;
+  },
+  async createSelfAuthDetails(details){
+    'use strict';
+    Logger.info(`attempting to create self auth details`);
+    Logger.verbose(`details to be created: ${JSON.stringify(details)}`);
+    const password = await this.hashPassword(details.password);
+    Logger.info(`password hash successful, returning formatted auth details`);
+    return {password}
+  },
+  /**
+   * This function will handle checking that all required details are provided, for database insertion
+   * @param details {object} the authentication details
+   * @returns {{email, user, group, authProviders: (*|Array), roles: [null]}}
+   * @throws Error if an invalid email is provided
+   * @throws Error if an invalid group ID is provided
+   * @throws Error if invalid user ID is provided
+   * @throws Error if no auth providers are provided
+   * @throws Error if auth identifier is provided, but not a name
+   */
 	formatDetails(details) {
 		'use strict';
+		Logger.info(`attempting to format details`);
+		Logger.verbose(`details to be formatted ${JSON.stringify(details)}`);
 		if (!details.email || !validation.validateEmail(details.email)) {
 			Logger.warn(`invalid email provided, aborting`);
 			throw new Error('invalid email provided');
 		}
+		Logger.verbose('email is valid');
 		if (!details.group || !validation.validateObjectId(details.group.toString())) {
 			Logger.warn(`invalid group id provided, aborting`);
 			throw new Error('invalid group id provided');
 		}
+		Logger.verbose('group id is valid format');
 		if (!details.user || !validation.validateObjectId(details.user.toString())) {
 			Logger.warn(`invalid user id provided, aborting`);
 			throw new Error('invalid user id provided');
 		}
-		if (!details.authProviders || !Array.isArray(details.authProviders) || details.authProviders.length < 1) {
-			Logger.warn(`no auth providers specified, aborting`);
-			throw new Error('no auth providers provided');
+		Logger.verbose(`user id is valid format`);
+		if (!details.authProvider || _.isEmpty(details.authProvider)) {
+			Logger.warn(`no auth provider specified, aborting`);
+			throw new Error('no auth provider specified');
 		}
-		if(details.authProviders[0].identifier && !details.authProviders[0].name){
+		Logger.verbose(`auth provider details available`);
+		if(details.authProvider.identifier && !details.authProvider.name){
 		  Logger.warn(`an auth provider identifier was provided, but not a name`);
 		  throw new Error('if an identifier is provided, a name must be provided also');
     }
-		return {
-			email: details.email,
-			user: details.user,
-			group: details.group,
-			authProviders: details.authProviders,
-			roles: [details.roles]
-		}
+    if(details.authProvider.name && !details.authProvider.identifier){
+      Logger.warn(`an auth provider identifier was provided, but not a name`);
+      throw new Error('if a name is provided, an identifier must be provided also');
+    }
+    Logger.verbose(`auth provider combo appears right`);
+    Logger.info(`details appear correct, returning savable details`);
+
+    const  detailsToBeReturned = {
+      email: details.email,
+      user: details.user,
+      group: details.group,
+      authProviders: [details.authProvider],
+      roles: [details.roles]
+    };
+    Logger.verbose(`details to be returned: ${JSON.stringify(detailsToBeReturned)}`);
+		return detailsToBeReturned;
 	},
+  /**
+   * This function is a wrapper for the db insertion
+   * @param details {object} the auth details to be saved
+   * @returns {Promise.<*>}
+   * @throws an error if the save operation fails
+   */
 	async createUserAuth(details) {
 		'use strict';
 		Logger.info(`attempting to create auth record`);
-		Logger.verbose(`details: ${details}`);
-		const newAuth = new UserAuth(this.formatDetails(details));
+		Logger.verbose(`details: ${JSON.stringify(details)}`);
+		const newAuth = new UserAuth(details);
 		try {
 			return await newAuth.save();
 		} catch (err) {
@@ -50,10 +134,17 @@ module.exports   = {
 		}
 
 	},
+  /**
+   * This function acts as a wrapper for password hashing
+   * @param password the password to be hashed in string form
+   * @returns {Promise.<*>}
+   * @throws an error if the password is not suitable
+   * @throws an error if the hash function fails
+   */
 	async hashPassword(password) {
 		'use strict';
-		if (!password || !password.toString() === password || password < 1) {
-			Logger.warn(`password does not exist`);
+		if (!password || !password.toString() === password || password.length < 5) {
+			Logger.warn(`password does not exist, or is unsuitable`);
 			throw new Error('trying to hash an incompatible password')
 		}
 		Logger.verbose(`attempting to hash password: ${password}`);
@@ -67,6 +158,11 @@ module.exports   = {
 		Logger.verbose(`password hashed successfully`);
 		return hashedPw;
 	},
+  /**
+   * This function is finds an auth object by its third party identifier
+   * @param id the third party auth id
+   * @returns {Promise.<*>}
+   */
 	async findByAuthIdentifier(id) {
 		'use strict';
 		let result;
@@ -79,9 +175,5 @@ module.exports   = {
 			throw e;
 		}
 		return result;
-	},
-	async authenticateFirebase() {
-		'use strict';
-
 	}
 };

@@ -13,7 +13,8 @@ describe('user group controller', function () {
 	describe('add group', function () {
 		const userId         = ObjectId();
 		const groupId        = ObjectId();
-		const sampleHash     = '$2a$10$VjoTsEslNeeOTwY7tMGTh.VbwWp6HI8WuAG1gq6XP1Bdqg/Q4fmqm';
+		// noinspection JSUnusedLocalSymbols
+    const sampleHash     = '$2a$10$VjoTsEslNeeOTwY7tMGTh.VbwWp6HI8WuAG1gq6XP1Bdqg/Q4fmqm';
 		let req, res, next, createGroupStub, createAuthStub, hashPasswordStub;
 		const groupToBeSaved = {
 			name: 'testgroup',
