@@ -10,13 +10,13 @@ module.exports            = {
 		'use strict';
 		let subject, authObj, groupObj;
 		Logger.info(`request recieved`);
-		Logger.verbose(`request : ${JSON.stringify(req.headers)}`);
+		Logger.verbose(`request headers: ${JSON.stringify(req.headers)}`);
 		try {
 			subject = await firebaseAuthService.verifyFirebaseToken(req.headers.token);
 			if (!subject) {
 				return next(new errors.UnauthorizedError('token rejected'));
 			}
-			Logger.info(`subject: ${subject}`);
+			Logger.verbose(`subject: ${subject}`);
 			authObj = await userAuthService.findByAuthIdentifier(subject);
 
 			Logger.info(`auth object: ${JSON.stringify(authObj)}`);
@@ -24,9 +24,7 @@ module.exports            = {
 			const groupId = authObj.group;
 			groupObj      = await userGroupService.findGroupById(groupId);
 			groupObj      = userGroupService.formatGroupForDelivery(groupObj, userId);
-			if (!_.includes(authObj.roles, 'group_admin')) {
-				groupObj.users = null;
-			}
+
 			return res.send(200, groupObj);
 		} catch (err) {
 			//fixme better handling

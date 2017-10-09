@@ -23,14 +23,18 @@ module.exports       = {
 			Logger.warn(`no user email found to format group, throwing error`);
 			throw new Error('no valid user email provided');
 		}
-		return {
-			name: details.name,
-			users: [{
-				email: details.email,
-				firstName: details.firstName,
-				surname: details.surname
-			}]
-		};
+		Logger.verbose(`details appear to be in correct format`);
+		const detailsToBeReturned  = {
+      name: details.name,
+      users: [{
+        email: details.email,
+        firstName: details.firstName,
+        surname: details.surname
+      }]
+    };
+		Logger.info(`returning group details`);
+		Logger.verbose(`details being returned: ${JSON.stringify(detailsToBeReturned)}`);
+		return detailsToBeReturned;
 	},
   //fixme: not tested
 	async removeGroupById(groupId) {
@@ -57,7 +61,7 @@ module.exports       = {
 			return group;
 		} catch (err) {
 			Logger.error(`error finding group`);
-			Logger.error(`error`);
+			Logger.error(`${err}`);
 			throw new Error(err);
 		}
 	},
